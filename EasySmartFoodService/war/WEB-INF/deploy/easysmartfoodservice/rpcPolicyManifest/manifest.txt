@@ -1,0 +1,3 @@
+# Module easysmartfoodservice
+# RPC service class, partial path of RPC policy file
+com.esf.service.client.GreetingService, 5EDB92479D5BF79BB56CB0A05062BA7D.gwt.rpc
