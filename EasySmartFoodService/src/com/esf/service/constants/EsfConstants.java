@@ -10,4 +10,5 @@ public final class EsfConstants {
     public static String orderuuid = "orderuuid";
     public static String insertOrderUrl = "https://api.mongolab.com/api/1/databases/order/collections/order?";
     public static String orderUrl = "https://api.mongolab.com/api/1/databases/order/collections/order?";
+    public static String deleteOrderUrl = "https://api.mongolab.com/api/1/databases/order/collections/order/";
 }

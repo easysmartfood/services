@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esf.service.constants.EsfConstants;
+import com.esf.service.databeans.BeanId;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -161,6 +162,74 @@ public class InsertOrder extends HttpServlet implements IInsertOrder {
 			      throws IOException {
 			
 			System.out.println("Delete");
+			String orderUuid = request.getParameter(EsfConstants.orderuuid); 
+		     
+		     System.out.println("orderuuid : " + orderUuid);
+		     
+		     String searchOrderJson = "{\"orderUuid\":\"" + orderUuid + "\"}";
+		    
+		  //   System.out.println("searchRestaurantJson : " + searchRestaurantJson);
+		     
+			// String searchRestaurantJson = "{\"restaurantUuid\":\"ad45f90a-8b84-11e3-ae4d-d231feb1dc81\"}"; 
+			
+	         String searchOrderJsonUTF = URLEncoder.encode(searchOrderJson, "UTF-8");
+	         
+			 String urlString = EsfConstants.orderUrl + "q=" + searchOrderJsonUTF + "&" + EsfConstants.mongoDb2Key;
+			 
+			 System.out.println("urlString : " + urlString);
+				 
+				 URL url = new URL(urlString);
+				 
+				 BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+				 String line;
+			     String responseString = "";
+				 while ((line = reader.readLine()) != null) {
+				        responseString = responseString + line;
+				    }
+				reader.close();
+
+				Gson gson = new Gson();
+				JsonElement jelem = gson.fromJson(responseString, JsonElement.class);
+				JsonArray jsonArray = jelem.getAsJsonArray();
+				JsonElement jelem1 = jsonArray.get(0);
+				JsonObject jobj = jelem1.getAsJsonObject();
+				JsonElement jobj1 = jobj.get("_id");
+				System.out.println("jObject");
+				JsonObject jobj2 = jobj1.getAsJsonObject();
+				
+				
+				String idString = jobj2.toString();
+				
+				BeanId idBean = gson.fromJson(idString, BeanId.class);
+				
+				System.out.println("idString:" + idBean.get$oid());
+				
+				String deleteUrlString = EsfConstants.deleteOrderUrl + idBean.get$oid() + "?" +  EsfConstants.mongoDb2Key;
+				URL durl = new URL(deleteUrlString);
+				
+				HttpURLConnection connection = (HttpURLConnection) durl.openConnection();
+		        connection.setDoOutput(true);
+		        connection.setRequestMethod("DELETE");
+		        connection.setRequestProperty("Content-Type","application/json");
+		        
+		        String deleteContent = "";
+		        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+		        writer.write(deleteContent);
+		        writer.close();
+		        String deleteResponseString = "";
+		        System.out.println("response code:" + connection.getResponseCode());
+		        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+		        	deleteResponseString="{\"deletedOrderUuid\":\"" + orderUuid.toString() + "\"}";
+		        }
+		        else
+		        {
+		        	deleteResponseString="{\"response\":\"error\"}";
+		        }
+
+				response.setContentType("application/json");
+				response.getWriter().println(deleteResponseString);
+					
+				
 		}
 		
 		public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -194,19 +263,27 @@ public class InsertOrder extends HttpServlet implements IInsertOrder {
 				reader.close();
 
 				Gson gson = new Gson();
+				String responseStringOrder="";
 				JsonElement jelem = gson.fromJson(responseString, JsonElement.class);
 				JsonArray jsonArray = jelem.getAsJsonArray();
-				JsonElement jelem1 = jsonArray.get(0);
-				JsonObject jobj = jelem1.getAsJsonObject();
-				String responseStringOrder="";
-				JsonElement jobj1 = jobj.get("orderdata");
-				System.out.println("jObject");
-				JsonObject jobj2 = jobj1.getAsJsonObject();
+				if(jsonArray.size()>0)
+				{
+				  JsonElement jelem1 = jsonArray.get(0);
+				  JsonObject jobj = jelem1.getAsJsonObject();
 				
-				responseStringOrder = jobj2.toString();
-				System.out.println("responseStringOrder:" + responseStringOrder);
+				  JsonElement jobj1 = jobj.get("orderdata");
+				  System.out.println("jObject");
+				  JsonObject jobj2 = jobj1.getAsJsonObject();
+				
+				  responseStringOrder = jobj2.toString();
+				  System.out.println("responseStringOrder:" + responseStringOrder);
 			    
+				}
 				
+				else
+				{
+					responseStringOrder="{\"response\":\"no order found\"}";
+				}
 		        response.setContentType("application/json");
 
 				response.getWriter().println(responseStringOrder);
