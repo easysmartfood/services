@@ -26,6 +26,16 @@
     <url-pattern>/restaurant</url-pattern>
   </servlet-mapping>
   
+   <servlet>
+    <servlet-name>getRestaurantRegion</servlet-name>
+    <servlet-class>com.esf.service.server.GetRestaurantRegion</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>getRestaurantRegion</servlet-name>
+    <url-pattern>/restaurant/region</url-pattern>
+  </servlet-mapping>
+  
   <servlet>
     <servlet-name>getFoodItems</servlet-name>
     <servlet-class>com.esf.service.server.GetFoodItems</servlet-class>

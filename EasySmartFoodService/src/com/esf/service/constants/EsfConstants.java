@@ -8,6 +8,10 @@ public final class EsfConstants {
 	public static String getFoodItemsUrl = "https://api.mongolab.com/api/1/databases/fooditems/collections/fooditems?";
     public static String restaurantuuid = "restaurantuuid";
     public static String orderuuid = "orderuuid";
+    public static String region = "region";
+    public static String lat = "lat";
+    public static String lon = "lon";
+    
     public static String insertOrderUrl = "https://api.mongolab.com/api/1/databases/order/collections/order?";
     public static String orderUrl = "https://api.mongolab.com/api/1/databases/order/collections/order?";
     public static String deleteOrderUrl = "https://api.mongolab.com/api/1/databases/order/collections/order/";

@@ -21,6 +21,10 @@ import com.google.gson.JsonObject;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.UUID;
 
 
@@ -43,9 +47,17 @@ public class InsertOrder extends HttpServlet implements IInsertOrder {
 		
 		UUID orderUuid = UUID.randomUUID();
 		
+		Date date = new Date();  
+		   
+		DateFormat formatter = new SimpleDateFormat("dd MMM yyyy HH:mm:ss z");  
+		formatter.setTimeZone(TimeZone.getTimeZone("IST"));  
+		String createDateIST=formatter.format(date).toString();
+		System.out.println(createDateIST); 
 		
 		
-		String postContent= "{\"orderUuid\":\""  + orderUuid.toString() + "\"," +  "\"orderdata\":" +  bodyString + "}"; 
+		String postContent= "{\"orderUuid\":\""  + orderUuid.toString() + "\"," + 
+				"\"createDate\":\""  + createDateIST + "\"," + 
+				"\"orderdata\":" +  bodyString + "}"; 
 		System.out.println("Post Content : " + postContent);
 		
 		String urlString = EsfConstants.insertOrderUrl + EsfConstants.mongoDb2Key;
@@ -71,6 +83,8 @@ public class InsertOrder extends HttpServlet implements IInsertOrder {
         }
 
 		response.setContentType("application/json");
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 		response.getWriter().println(responseString);
 	}
 
@@ -102,6 +116,14 @@ public class InsertOrder extends HttpServlet implements IInsertOrder {
 	 
 			return sb.toString();
 	 
+		}
+		
+		public void doOptions(HttpServletRequest request, HttpServletResponse response)
+		{
+			response.addHeader("Access-Control-Allow-Origin", "*");
+			response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+			response.addHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE");
+	
 		}
 			
 		public void doPut(HttpServletRequest request, HttpServletResponse response)
@@ -152,6 +174,8 @@ public class InsertOrder extends HttpServlet implements IInsertOrder {
 	        }
 
 			response.setContentType("application/json");
+			response.addHeader("Access-Control-Allow-Origin", "*");
+	//		response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 			response.getWriter().println(responseString);
 			
 			
@@ -227,6 +251,7 @@ public class InsertOrder extends HttpServlet implements IInsertOrder {
 		        }
 
 				response.setContentType("application/json");
+				response.addHeader("Access-Control-Allow-Origin", "*");
 				response.getWriter().println(deleteResponseString);
 					
 				
@@ -285,6 +310,7 @@ public class InsertOrder extends HttpServlet implements IInsertOrder {
 					responseStringOrder="{\"response\":\"no order found\"}";
 				}
 		        response.setContentType("application/json");
+		        response.addHeader("Access-Control-Allow-Origin", "*");
 
 				response.getWriter().println(responseStringOrder);
 

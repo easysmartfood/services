@@ -12,6 +12,7 @@ import com.esf.service.constants.EsfConstants;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import java.net.URL;
+import java.net.URLEncoder;
 
 
 /**
@@ -23,8 +24,36 @@ public class GetRestaurant extends RemoteServiceServlet implements IGetRestauran
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException{
 		
+		String region = request.getParameter(EsfConstants.region);
+		String restaurantUuid = request.getParameter(EsfConstants.restaurantuuid); 
+
+		String searchRegionJson = "";
+		String searchRegionJsonUTF;
+		String searchRestaurantJson = "";
+		String searchRestaurantJsonUTF;
+		String urlString;
+		if(region!=null)
+		{
+			searchRegionJson = "{\"region\":\"" + region + "\"}";
+			searchRegionJsonUTF = URLEncoder.encode(searchRegionJson, "UTF-8");
+			urlString = EsfConstants.getRestaurantUrl + "q=" + searchRegionJsonUTF + "&" + EsfConstants.mongoDb1Key;
+		}
+		else if(restaurantUuid!=null)
+		{
+			searchRestaurantJson = "{\"uuid\":\"" + restaurantUuid + "\"}";
+			searchRestaurantJsonUTF = URLEncoder.encode(searchRestaurantJson, "UTF-8");
+			urlString = EsfConstants.getRestaurantUrl + "q=" + searchRestaurantJsonUTF + "&" + EsfConstants.mongoDb1Key;
+		    System.out.println(urlString);
+		}
+		else
+		{
+			urlString = EsfConstants.getRestaurantUrl + EsfConstants.mongoDb1Key;
+		}
+		
+
+ 
           		
-		 String urlString = EsfConstants.getRestaurantUrl + EsfConstants.mongoDb1Key;
+	
 		 URL url = new URL(urlString);
 		 BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 		 String line;
@@ -35,6 +64,7 @@ public class GetRestaurant extends RemoteServiceServlet implements IGetRestauran
 		reader.close();
 
         response.setContentType("application/json");
+        response.addHeader("Access-Control-Allow-Origin", "*");
 
 		response.getWriter().println(responseString);
 
